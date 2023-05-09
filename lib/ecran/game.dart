@@ -16,6 +16,8 @@ class Game extends StatefulWidget {
 }
 
 class _GameState extends State<Game> {
+  final _formKey = GlobalKey<FormState>();
+  String _valeurSaisie = "";
 
   // var bird
   static double birdY = 0;
@@ -71,7 +73,7 @@ class _GameState extends State<Game> {
       if(gameOver()){
         timer.cancel();
         gameStarted = false;
-        _showDialog();
+        _gameOver();
       }
       moveMap();
     });
@@ -99,20 +101,117 @@ class _GameState extends State<Game> {
     });
   }
 
-  void _showDialog(){
+  void _afficheRestartGame(){
     showDialog(
       context: context,
       barrierDismissible: false, 
       builder: (BuildContext context){
         return AlertDialog(
-          backgroundColor: Colors.brown,
-          title: Center(
-            child: Text("Game Over"),
+          backgroundColor: Colors.orange.shade100,
+          title: Column(
+            children: [
+              Center(
+                child: Text("Recommencer", textAlign: TextAlign.center,),
+              ),
+              Center(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: TextFormField(
+                          decoration: const InputDecoration(labelText:"Nouveau Pseudo"),
+                          validator: (valeur) {
+                            if (valeur == null || valeur.isEmpty) {
+                              return 'Veuillez saisir un pseudonyme';
+                            } else {
+                              _valeurSaisie = valeur.toString();
+                              FlappyBird.joueur = _valeurSaisie;
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ]
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage())), 
+              onPressed: () => Navigator.pop(context), 
+              child: const Text("Fermer")
+            ),
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  resetGame();
+                }
+              },
+              child: const Text("Valider")
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+  void _gameOver(){
+    showDialog(
+      context: context,
+      barrierDismissible: false, 
+      builder: (BuildContext context){
+        return AlertDialog(
+          backgroundColor: Colors.orange.shade100,
+          title: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Game Over"),
+                Padding(padding: EdgeInsets.all(10)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Dommage ", style: TextStyle(
+                      fontSize: 15.0
+                    ),),
+                    Text(FlappyBird.joueur, style: TextStyle(
+                      fontSize: 15.0,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.all(5)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Votre score est de : ", style: TextStyle(
+                      fontSize: 15.0
+                    ),),
+                    Text(score.toString(), style: TextStyle(
+                      fontSize: 15.0,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(title: "Flappy Bird",))), 
               child: Text("Quitter")
+            ),
+            TextButton(
+              onPressed: () => setState(() {
+                Navigator.pop(context);
+                _afficheRestartGame();
+              }), 
+              child: Text("Changer de nom")
             ),
             TextButton(
               onPressed: () => resetGame(), 
@@ -201,13 +300,31 @@ class _GameState extends State<Game> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Text("Nom joueur", style: TextStyle(
+                          fontSize: 18.0,
+                          decoration: TextDecoration.none,
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal
+                        ),),
+                        Padding(padding: EdgeInsets.all(5)),
+                        Text(FlappyBird.joueur, style: TextStyle(
+                          fontSize: 18.0,
+                          decoration: TextDecoration.none,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                        ),),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                         Text("Score", style: TextStyle(
                           fontSize: 18.0,
                           decoration: TextDecoration.none,
                           color: Colors.white,
                           fontWeight: FontWeight.normal
                         ),),
-                        Padding(padding: EdgeInsets.all(15)),
+                        Padding(padding: EdgeInsets.all(5)),
                         Text(score.toString(), style: TextStyle(
                           fontSize: 18.0,
                           decoration: TextDecoration.none,
@@ -225,7 +342,7 @@ class _GameState extends State<Game> {
                           color: Colors.white,
                           fontWeight: FontWeight.normal
                         ),),
-                        Padding(padding: EdgeInsets.all(15)),
+                        Padding(padding: EdgeInsets.all(5)),
                         Text(bestScore.toString(),
                           style: TextStyle(
                           fontSize: 18.0,

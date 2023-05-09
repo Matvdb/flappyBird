@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.cyan,
       ),
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(),
+      home: const MyHomePage(title: "Flappy Bird",),
     );
   }
 }

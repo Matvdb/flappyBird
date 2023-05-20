@@ -1,6 +1,6 @@
 class FlappyBird{
   
   static int score = 0;
-  int ?_bestScore;
+  static int bestScore = 0;
   static String joueur = "";
 }

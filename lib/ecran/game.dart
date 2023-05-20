@@ -28,9 +28,11 @@ class _GameState extends State<Game> {
   double birdWidth = 0.1;
   double birdHeight = 0.1;
   bool gameStarted = false;
-  int score = 0;
-  int bestScore = 0;
   double initialPosition = birdY;
+
+  // gestion scores
+  var scores = FlappyBird.score;
+  var bestScores = FlappyBird.bestScore;
 
   static List<double> barrierX = [2, 2 + 1.5];
   static double obstacleWidth = 0.5;
@@ -43,6 +45,14 @@ class _GameState extends State<Game> {
     setState(() {
       time = 0;
       initialPosition = birdY;
+    });
+  }
+
+  void incrementScore() {
+    setState(() {
+      if (scores > bestScores) {
+        bestScores = scores;
+      }
     });
   }
 
@@ -74,6 +84,8 @@ class _GameState extends State<Game> {
         timer.cancel();
         gameStarted = false;
         _gameOver();
+      } else if (barrierX.first < -obstacleWidth || barrierX.last < -obstacleWidth) {
+        scores += 1;
       }
       moveMap();
     });
@@ -110,7 +122,7 @@ class _GameState extends State<Game> {
           backgroundColor: Colors.orange.shade100,
           title: Column(
             children: [
-              Center(
+              const Center(
                 child: Text("Recommencer", textAlign: TextAlign.center,),
               ),
               Center(
@@ -169,29 +181,29 @@ class _GameState extends State<Game> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Game Over"),
-                Padding(padding: EdgeInsets.all(10)),
+                const Text("Game Over"),
+                const Padding(padding: EdgeInsets.all(10)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Dommage ", style: TextStyle(
+                    const Text("Dommage ", style: TextStyle(
                       fontSize: 15.0
                     ),),
-                    Text(FlappyBird.joueur, style: TextStyle(
+                    Text(FlappyBird.joueur, style: const TextStyle(
                       fontSize: 15.0,
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
                     ),),
                   ],
                 ),
-                Padding(padding: EdgeInsets.all(5)),
+                const Padding(padding: EdgeInsets.all(5)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Votre score est de : ", style: TextStyle(
+                    const Text("Votre score est de : ", style: TextStyle(
                       fontSize: 15.0
                     ),),
-                    Text(score.toString(), style: TextStyle(
+                    Text("$scores", style: const TextStyle(
                       fontSize: 15.0,
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
@@ -203,19 +215,19 @@ class _GameState extends State<Game> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(title: "Flappy Bird",))), 
-              child: Text("Quitter")
+              onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>const  MyHomePage(title: "Flappy Bird",))), 
+              child: const Text("Quitter")
             ),
             TextButton(
               onPressed: () => setState(() {
                 Navigator.pop(context);
                 _afficheRestartGame();
               }), 
-              child: Text("Changer de nom")
+              child: const Text("Changer de nom")
             ),
             TextButton(
               onPressed: () => resetGame(), 
-              child: Text("Rejouer")
+              child: const Text("Rejouer")
             ),
           ],
         );
@@ -249,8 +261,8 @@ class _GameState extends State<Game> {
                       birdHeight: birdHeight,
                     ),
                     Container(
-                      alignment: Alignment(0, -0.5),
-                      child: gameStarted ? Text("") : Text("PRESS BUTTON TO PLAY", 
+                      alignment: const Alignment(0, -0.5),
+                      child: gameStarted ? const Text("") : const Text("TAP TO PLAY", 
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.none,
@@ -300,14 +312,14 @@ class _GameState extends State<Game> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Nom joueur", style: TextStyle(
+                        const Text("Nom joueur", style: TextStyle(
                           fontSize: 18.0,
                           decoration: TextDecoration.none,
                           color: Colors.white,
                           fontWeight: FontWeight.normal
                         ),),
-                        Padding(padding: EdgeInsets.all(5)),
-                        Text(FlappyBird.joueur, style: TextStyle(
+                        const Padding(padding: EdgeInsets.all(5)),
+                        Text(FlappyBird.joueur, style: const TextStyle(
                           fontSize: 18.0,
                           decoration: TextDecoration.none,
                           color: Colors.white,
@@ -318,14 +330,14 @@ class _GameState extends State<Game> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Score", style: TextStyle(
+                        const Text("Score", style: TextStyle(
                           fontSize: 18.0,
                           decoration: TextDecoration.none,
                           color: Colors.white,
                           fontWeight: FontWeight.normal
                         ),),
-                        Padding(padding: EdgeInsets.all(5)),
-                        Text(score.toString(), style: TextStyle(
+                        const Padding(padding: EdgeInsets.all(5)),
+                        Text("$scores", style: const TextStyle(
                           fontSize: 18.0,
                           decoration: TextDecoration.none,
                           color: Colors.white,
@@ -336,15 +348,15 @@ class _GameState extends State<Game> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Best Score", style: TextStyle(
+                        const Text("Best Score", style: TextStyle(
                           fontSize: 18.0,
                           decoration: TextDecoration.none,
                           color: Colors.white,
                           fontWeight: FontWeight.normal
                         ),),
-                        Padding(padding: EdgeInsets.all(5)),
-                        Text(bestScore.toString(),
-                          style: TextStyle(
+                        const Padding(padding: EdgeInsets.all(5)),
+                        Text("$bestScores",
+                          style: const TextStyle(
                           fontSize: 18.0,
                           decoration: TextDecoration.none,
                           color: Colors.white,
